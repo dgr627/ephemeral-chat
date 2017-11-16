@@ -29,6 +29,7 @@ class User(ndb.Model):
         if User.query(User.username == request['username']).count() > 0:
             print("yes")
             raise endpoints.BadRequestException("Username already taken.")
+            print("yes")
         user_id = str(uuid.uuid4())
         user = User(user_id = user_id, username = request['username'], id = user_id)
         credential = Credential()
@@ -36,7 +37,7 @@ class User(ndb.Model):
         credential.put()
         user.credential = credential.key
         user.put()
-        return user
+        return {"user_id":user.user_id, "token": credential.token}
 
 
 class Credential(ndb.Model):

@@ -1,6 +1,6 @@
 
 # API definitions
-from flask import Flask, request, Response
+from flask import Flask, request, jsonify
 from models import *
 
 app = Flask(__name__)
@@ -11,5 +11,8 @@ def hello():
 
 @app.route("/create_profile", methods = ['POST'])
 def create_profile():
-	x = request.get_json()
-	y = User.create_new_user(x)
+	result = User.create_new_user(request.get_json())
+	print result
+	try:
+		return jsonify(result)
+	except Exception as e: print(e)
