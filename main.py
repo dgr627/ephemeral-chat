@@ -13,12 +13,13 @@ def hello():
 
 @app.route("/create_profile", methods=['POST'])
 def create_profile():
-    result = User.create_new_user(request.get_json())
-    print result
-    try:
-        return jsonify(result)
-    except Exception as e:
-        print(e)
+	username = request.get_json()['username']
+	password = request.get_json()['password']
+	result = User.create_new_user(username, password)
+	print result
+	try:
+		return jsonify(result)
+	except Exception as e: print(e)
 
 
 @app.errorhandler(StandardError)

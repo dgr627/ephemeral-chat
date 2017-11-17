@@ -30,13 +30,13 @@ class User(ndb.Model):
         if User.query(User.username == request['username']).count() > 0:
             raise StandardError("Username already taken.")
         user_id = str(uuid.uuid4())
-        user = User(user_id = user_id, username = request['username'], id = user_id)
         credential = Credential()
-        credential.hash_password(request['password'])
+        credential.hash_password(password)
         credential.put()
-        user.credential = credential.key
+        user = User(user_id = user_id, username = username, id = user_id, credential = credential.key)
         user.put()
-        return {"user_id":user.user_id, "token": credential.token}
+        return user
+
 
 
 class Credential(ndb.Model):
