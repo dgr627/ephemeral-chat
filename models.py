@@ -26,8 +26,8 @@ class User(ndb.Model):
         return True
 
     @classmethod
-    def create_new_user(cls, request):
-        if User.query(User.username == request['username']).count() > 0:
+    def create_new_user(cls, username, password):
+        if User.query(User.username == username).count() > 0:
             raise StandardError("Username already taken.")
         user_id = str(uuid.uuid4())
         credential = Credential()
