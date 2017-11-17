@@ -1,6 +1,6 @@
 # API definitions
 from flask import Flask, request, jsonify
-from models import *
+from models.user import User
 from standard_error import StandardError
 
 app = Flask(__name__)
@@ -16,16 +16,14 @@ def create_profile():
     username = request.get_json()['username']
     password = request.get_json()['password']
     result = User.create_new_user(username, password)
-    print result
     try:
-        return jsonify(result)
+        return jsonify(result.to_auth_output())
     except Exception as e:
         print(e)
 
 
 @app.errorhandler(StandardError)
-def handle_invalid_usage(error):
+def handle_standard_error(error):
     response = jsonify(error.to_dict())
     response.status_code = error.status_code
-    response.success = False
     return response
