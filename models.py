@@ -3,6 +3,7 @@ import endpoints
 import uuid
 from google.appengine.ext import ndb
 from pybcrypt import bcrypt
+from standard_error import StandardError
 
 class User(ndb.Model):
     user_id = ndb.StringProperty(required=True)
@@ -25,9 +26,9 @@ class User(ndb.Model):
         return True
 
     @classmethod
-    def create_new_user(cls, username, password): 
+    def create_new_user(cls, username, password):
         if User.query(User.username == username).count() > 0:
-            raise endpoints.BadRequestException("Username already taken.")
+            raise StandardError("Username already taken.")
         user_id = str(uuid.uuid4())
         credential = Credential()
         credential.hash_password(password)
