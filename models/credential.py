@@ -1,9 +1,6 @@
-
-import endpoints
-import uuid
 from google.appengine.ext import ndb
 from pybcrypt import bcrypt
-from standard_error import StandardError
+
 
 class Credential(ndb.Model):
     hashed_password = ndb.StringProperty(indexed=False)
@@ -16,7 +13,6 @@ class Credential(ndb.Model):
         self.hashed_password = h
         self.salt = s
         self.token = bcrypt.gensalt()
-    
 
     def verify_password(self, inputstr):
         if not bcrypt.hashpw(inputstr, self.salt) == self.hashed_password:
