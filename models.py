@@ -25,19 +25,17 @@ class User(ndb.Model):
         return True
 
     @classmethod
-    def create_new_user(cls, request):
-        if User.query(User.username == request['username']).count() > 0:
-            print("yes")
+    def create_new_user(cls, username, password): 
+        if User.query(User.username == username).count() > 0:
             raise endpoints.BadRequestException("Username already taken.")
-            print("yes")
         user_id = str(uuid.uuid4())
-        user = User(user_id = user_id, username = request['username'], id = user_id)
         credential = Credential()
-        credential.hash_password(request['password'])
+        credential.hash_password(password)
         credential.put()
-        user.credential = credential.key
+        user = User(user_id = user_id, username = username, id = user_id, credential = credential.key)
         user.put()
-        return {"user_id":user.user_id, "token": credential.token}
+        return user
+
 
 
 class Credential(ndb.Model):
