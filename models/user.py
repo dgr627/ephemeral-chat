@@ -14,15 +14,27 @@ class User(ndb.Model):
     groups_invited = ndb.KeyProperty(kind='Group', repeated=True)
     credential = ndb.KeyProperty(kind='Credential')
 
-    def authenticate_password(self, request):
-        if not self.credential.get().verify_password(request):
-            raise StandardError("Incorrect password.")
-        return True
+    @classmethod
+    def return_by_user_id(cls, user_id):
+        return ndb.Key(User, user_id).get()
 
-    def authenticate_token(self, request):
-        if not self.credential.get().verify_token(request):
+    @classmethod
+    def return_by_username(cls, username):
+        return User.query(User.username == username).get()
+
+    @classmethod
+    def authenticate_password(cls, username, password):
+        user = User.return_by_username(username)
+        if not user.credential.get().verify_password(password):
+            raise StandardError("Incorrect password.")
+        return user
+
+    @classmethod
+    def authenticate_token(cls, user_id, token):
+        user = User.return_by_user_id(user_id)
+        if not user.credential.get().verify_token(token):
             raise StandardError("Not logged in")
-        return True
+        return user
 
     @classmethod
     def create_new_user(cls, username, password):
@@ -36,8 +48,17 @@ class User(ndb.Model):
         user.put()
         return user
 
-    def to_auth_output(self):
+    def login_output(self):
         return {
             'user_id': self.user_id,
             'token': self.credential.get().token
         }
+
+    def public_output(self):
+        return {
+            'username': self.username,
+            'blurb': self.blurb,
+            'avatar': self.avatar
+        }
+
+
