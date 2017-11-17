@@ -2,7 +2,7 @@
 import endpoints
 import uuid
 from google.appengine.ext import ndb
-from encryption import bcrypt
+from pybcrypt import bcrypt
 
 class User(ndb.Model):
     user_id = ndb.StringProperty(required=True)
