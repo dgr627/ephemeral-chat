@@ -2,6 +2,7 @@
 
 from google.appengine.ext import vendor
 
-# Add any libraries installed in the "lib" folder.
+# Add any libraries installed in the "lib" and "tools" folders.
 
 vendor.add('lib')
+vendor.add('tools')
