@@ -7,7 +7,7 @@ from models.credential import Credential
 class User(ndb.Model):
     user_id = ndb.StringProperty(required=True)
     username = ndb.StringProperty()
-    email = ndb.StringProperty
+    email = ndb.StringProperty()
     blurb = ndb.StringProperty()
     avatar = ndb.BlobProperty()
     groups_member = ndb.KeyProperty(kind='Group', repeated=True)
@@ -48,6 +48,14 @@ class User(ndb.Model):
         user.put()
         return user
 
+    def update_profile(self, data):
+        for field in ['username', 'email', 'blurb', 'avatar']:
+            if field in data:
+                setattr(self, field, data[field])
+        self.put()
+        return self
+
+
     def login_output(self):
         return {
             'user_id': self.user_id,
@@ -61,4 +69,10 @@ class User(ndb.Model):
             'avatar': self.avatar
         }
 
-
+    def owner_output(self):
+        return {
+            'username': self.username,
+            'blurb': self.blurb,
+            'avatar': self.avatar,
+            'email': self.email
+        }

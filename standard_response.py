@@ -1,4 +1,5 @@
 # Standard Response Class
+# Contains data, HTTP status code, custom message string
 
 from flask import jsonify, make_response
 
