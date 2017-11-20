@@ -12,7 +12,7 @@ class User(ndb.Model):
     avatar = ndb.BlobProperty()
     groups_member = ndb.KeyProperty(kind='Group', repeated=True)
     groups_invited = ndb.KeyProperty(kind='Group', repeated=True)
-    credential = ndb.KeyProperty(kind='Credential')
+    credential = ndb.LocalStructuredProperty(Credential, repeated=False)
 
     @classmethod
     def return_by_user_id(cls, user_id):
@@ -25,14 +25,14 @@ class User(ndb.Model):
     @classmethod
     def authenticate_password(cls, username, password):
         user = User.return_by_username(username)
-        if not user.credential.get().verify_password(password):
+        if not user.credential.verify_password(password):
             raise StandardError("Incorrect password.")
         return user
 
     @classmethod
     def authenticate_token(cls, user_id, token):
         user = User.return_by_user_id(user_id)
-        if not user.credential.get().verify_token(token):
+        if not user.credential.verify_token(token):
             raise StandardError("Not logged in")
         return user
 
@@ -43,8 +43,7 @@ class User(ndb.Model):
         user_id = str(uuid.uuid4())
         credential = Credential()
         credential.hash_password(password)
-        credential.put()
-        user = User(user_id=user_id, username=username, id=user_id, credential=credential.key)
+        user = User(user_id=user_id, username=username, id=user_id, credential=credential)
         user.put()
         return user
 
@@ -59,7 +58,7 @@ class User(ndb.Model):
     def login_output(self):
         return {
             'user_id': self.user_id,
-            'token': self.credential.get().token
+            'token': self.credential.token
         }
 
     def public_output(self):
