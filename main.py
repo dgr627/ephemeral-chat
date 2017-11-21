@@ -3,15 +3,17 @@
 
 # Imports
 
-from flask import Flask, request, jsonify
+from flask import Flask, jsonify
+from responses.standard_error import StandardError
 from endpoints.user_endpoints import user_endpoints
-
+from endpoints.group_endpoints import group_endpoints
 
 
 # Initialize Flask App
 
 app = Flask(__name__)
 app.register_blueprint(user_endpoints)
+app.register_blueprint(group_endpoints)
 
 # Hello World
 

@@ -1,18 +1,18 @@
 import uuid
 from google.appengine.ext import ndb
-from standard_error import StandardError
+from responses.standard_error import StandardError
 from models.credential import Credential
 
 
 class User(ndb.Model):
-    user_id = ndb.StringProperty(required=True)
-    username = ndb.StringProperty()
+    user_id = ndb.StringProperty(required = True)
+    username = ndb.StringProperty(required = True)
     email = ndb.StringProperty()
     blurb = ndb.StringProperty()
     avatar = ndb.BlobProperty()
-    groups_member = ndb.KeyProperty(kind='Group', repeated=True)
-    groups_invited = ndb.KeyProperty(kind='Group', repeated=True)
-    credential = ndb.LocalStructuredProperty(Credential, repeated=False)
+    groups_member = ndb.KeyProperty(kind = 'Group', repeated = True)
+    groups_invited = ndb.KeyProperty(kind = 'Group', repeated = True)
+    credential = ndb.LocalStructuredProperty(Credential, repeated = False)
 
     @classmethod
     def return_by_user_id(cls, user_id):
@@ -43,7 +43,10 @@ class User(ndb.Model):
         user_id = str(uuid.uuid4())
         credential = Credential()
         credential.hash_password(password)
-        user = User(user_id=user_id, username=username, id=user_id, credential=credential)
+        user = User(user_id=user_id,
+            username=username,
+            id=user_id, 
+            credential=credential)
         user.put()
         return user
 

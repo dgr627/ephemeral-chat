@@ -1,9 +1,9 @@
 
 # User-related endpoint definitions
 
-from flask import Flask, request, jsonify, Blueprint
+from flask import request, Blueprint
 from models.user import User
-from standard_response import json_response
+from responses.standard_response import json_response
 
 # Declare Blueprint
 
