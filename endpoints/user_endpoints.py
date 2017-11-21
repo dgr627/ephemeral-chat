@@ -33,9 +33,9 @@ def login():
 def public_view_profile(sought_user_id):
 	user_id = request.get_json()['user_id']
 	token = request.get_json()['token']
-	if User.authenticate_token(user_id, token):
-		user = User.return_by_user_id(sought_user_id)
-		return json_response(user.public_output())
+	User.authenticate_token(user_id, token)
+	user = User.return_by_user_id(sought_user_id)
+	return json_response(user.public_output())
 
 # Profile Owner View
 
