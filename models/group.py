@@ -23,12 +23,20 @@ class Group(ndb.Model):
     	members.append(ndb.Key(User, data['user_id']))
         group = Group(groupname = data['groupname'],
             members = members,
-            invited_members = invited_member_keys)
+            invited_members = invited_member_keys, id = data['groupname'])
         for field in ('avatar', 'blurb'):
             if field in data:
                 setattr(group, field, data[field])
     	group.put()
     	return group
+
+    def update_group_info(self, data):
+        for field in ('avatar', 'blurb'):
+            if field in data:
+                setattr(self, field, data[field])
+        self.put()
+        print self
+        return self
  
     def info_output(self):
         member_usernames = []
