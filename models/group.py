@@ -6,7 +6,7 @@ class Group(ndb.Model):
     groupname = ndb.StringProperty(required=True)
     members = ndb.KeyProperty(kind='User', repeated=True)
     invited_members = ndb.KeyProperty(kind='User', repeated=True)
-    message_list = ndb.KeyProperty(kind='ChatMessage', repeated=True)
+    message_list = ndb.KeyProperty(kind='Message', repeated=True)
     avatar = ndb.BlobProperty()
     blurb = ndb.StringProperty()
 
@@ -30,6 +30,10 @@ class Group(ndb.Model):
     	group.put()
     	return group
 
+    @classmethod
+    def return_by_groupname(cls, groupname):
+        return ndb.Key(Group, groupname).get()
+
     def update_group_info(self, data):
         for field in ('avatar', 'blurb'):
             if field in data:
@@ -51,3 +55,10 @@ class Group(ndb.Model):
         'invited_members': invited_member_usernames,
         'blurb': self.blurb,
         'avatar': self.avatar}
+
+    def message_list_output(self):
+        message_ids = []
+        for x in range(0, len(self.message_list)):
+            msg_id = self.message_list[x].id()
+            message_ids.append(msg_id)
+        return {'message_ids' : message_ids}

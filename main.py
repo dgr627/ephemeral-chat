@@ -7,6 +7,7 @@ from flask import Flask, jsonify
 from responses.standard_error import StandardError
 from endpoints.user_endpoints import user_endpoints
 from endpoints.group_endpoints import group_endpoints
+from endpoints.message_endpoints import message_endpoints
 
 
 # Initialize Flask App
@@ -14,6 +15,7 @@ from endpoints.group_endpoints import group_endpoints
 app = Flask(__name__)
 app.register_blueprint(user_endpoints)
 app.register_blueprint(group_endpoints)
+app.register_blueprint(message_endpoints)
 
 # Hello World
 
