@@ -31,11 +31,13 @@ def login():
 
 @user_endpoints.route("/user/public_view/<sought_user_id>", methods = ['POST'])
 def public_view_profile(sought_user_id):
-	user_id = request.get_json()['user_id']
-	token = request.get_json()['token']
-	User.authenticate_token(user_id, token)
-	user = User.return_by_user_id(sought_user_id)
-	return json_response(user.public_output())
+	try:
+		user_id = request.get_json()['user_id']
+		token = request.get_json()['token']
+		User.authenticate_token(user_id, token)
+		user = User.return_by_user_id(sought_user_id)
+		return json_response(user.public_output())
+	except Exception as e: print(e)
 
 # Profile Owner View
 

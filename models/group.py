@@ -34,10 +34,14 @@ class Group(ndb.Model):
     def return_by_groupname(cls, groupname):
         return ndb.Key(Group, groupname).get()
 
-    @classmethod
-    def check_ismember(cls, groupname, user_id):
-        group = Group.return_by_groupname(groupname)
-        
+    def check_ismember(self, user_id):
+        count = 0
+        while count < len(self.members):
+            if user_id == self.members[count].id():
+                return self
+            count+=1
+        raise StandardError("User isn't a member of group.")
+
 
     def update_group_info(self, data):
         for field in ('avatar', 'blurb'):

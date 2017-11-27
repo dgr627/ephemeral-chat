@@ -17,12 +17,13 @@ def hello():
 @message_endpoints.route("/message/post/<groupname>", methods = ['POST'])
 def create_message(groupname):
 	data = request.get_json()
-	User.authenticate_token(data['user_id'], data['token'])
+	user = User.authenticate_token(data['user_id'], data['token'])
+	user.check_ismember(groupname)
 	message = Message.create_message(groupname = groupname, data = data)
 	return json_response(message.message_output(), message = "Message posted!")
 
 @message_endpoints.route("/message/view/<msg_id>", methods = ['POST'])
 def view_message(msg_id):
 	data = request.get_json()
-	User.authenticate_token(data['user_id'], data['token'])
+	user = User.authenticate_token(data['user_id'], data['token'])
 	return json_response(Message.return_by_msg_id(msg_id))

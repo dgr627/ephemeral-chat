@@ -3,7 +3,6 @@ from google.appengine.ext import ndb
 from responses.standard_error import StandardError
 from models.credential import Credential
 
-
 class User(ndb.Model):
     user_id = ndb.StringProperty(required = True)
     username = ndb.StringProperty(required = True)
@@ -38,7 +37,6 @@ class User(ndb.Model):
 
     @classmethod
     def valid_password(cls, password):
-        print("here")
         if len(password) < 6:
             raise StandardError("Invalid password")
         return password
@@ -65,6 +63,18 @@ class User(ndb.Model):
         self.put()
         return self
 
+    def add_group(self, groupname):
+        self.groups_member.append(ndb.Key(Group, groupname))
+        self.put()
+        return self
+
+    def check_ismember(self, groupname):
+        count = 0
+        while count < len(self.groups_member):
+            if groupname == self.groups_member[count].id():
+                return self
+            count+=1
+        raise StandardError("User isn't a member of group.")
 
     def login_output(self):
         return {
@@ -73,16 +83,36 @@ class User(ndb.Model):
         }
 
     def public_output(self):
-        return {
-            'username': self.username,
-            'blurb': self.blurb,
-            'avatar': self.avatar
-        }
-
-    def owner_output(self):
+        groups_member_names = []
+        for x in range(0, len(self.groups_member)):
+            groups_member_names.append(self.groups_member[x].id())
+        invited_groups_names = []
+        for y in range(0, len(self.groups_invited)):
+            invited_groups_names.append(self.groups_invited[y].id())
         return {
             'username': self.username,
             'blurb': self.blurb,
             'avatar': self.avatar,
-            'email': self.email
+            'groups_member' : groups_member_names,
+            'groups_invited' : invited_groups_names
         }
+
+    def owner_output(self):
+        groups_member_names = []
+        for x in range(0, len(self.groups_member)):
+            groups_member_names.append(self.groups_member[x].id())
+        invited_groups_names = []
+        for y in range(0, len(self.groups_invited)):
+            invited_groups_names.append(self.groups_invited[y].id())
+        return {
+            'username': self.username,
+            'blurb': self.blurb,
+            'avatar': self.avatar,
+            'email': self.email,
+            'groups_member' : groups_member_names,
+            'groups_invited' : invited_groups_names
+        }
+
+# Avoiding circular import
+
+from models.group import Group
