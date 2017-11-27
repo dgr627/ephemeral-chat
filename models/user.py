@@ -37,10 +37,18 @@ class User(ndb.Model):
         return user
 
     @classmethod
+    def valid_password(cls, password):
+        print("here")
+        if len(password) < 6:
+            raise StandardError("Invalid password")
+        return password
+
+    @classmethod
     def create_new_user(cls, username, password):
         if User.query(User.username == username).count() > 0:
             raise StandardError("Username already taken.")
         user_id = str(uuid.uuid4())
+        password = User.valid_password(password)
         credential = Credential()
         credential.hash_password(password)
         user = User(user_id=user_id,

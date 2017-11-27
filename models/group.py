@@ -34,6 +34,11 @@ class Group(ndb.Model):
     def return_by_groupname(cls, groupname):
         return ndb.Key(Group, groupname).get()
 
+    @classmethod
+    def check_ismember(cls, groupname, user_id):
+        group = Group.return_by_groupname(groupname)
+        
+
     def update_group_info(self, data):
         for field in ('avatar', 'blurb'):
             if field in data:

@@ -11,7 +11,7 @@ user_endpoints = Blueprint('user_endpoints', __name__)
 
 # Create Profile
 
-@user_endpoints.route("/create_profile", methods = ['POST'])
+@user_endpoints.route("/user/create", methods = ['POST'])
 def create_profile():
     username = request.get_json()['username']
     password = request.get_json()['password']
@@ -20,7 +20,7 @@ def create_profile():
 
 # Login
 
-@user_endpoints.route("/login", methods = ['POST'])
+@user_endpoints.route("/user/login", methods = ['POST'])
 def login():
 	username = request.get_json()['username']
 	password = request.get_json()['password']
@@ -29,7 +29,7 @@ def login():
 
 # Profile Public View
 
-@user_endpoints.route("/public_view_profile/<sought_user_id>", methods = ['POST'])
+@user_endpoints.route("/user/public_view/<sought_user_id>", methods = ['POST'])
 def public_view_profile(sought_user_id):
 	user_id = request.get_json()['user_id']
 	token = request.get_json()['token']
@@ -39,7 +39,7 @@ def public_view_profile(sought_user_id):
 
 # Profile Owner View
 
-@user_endpoints.route("/owner_view_profile/<sought_user_id>", methods = ['POST'])
+@user_endpoints.route("/user/owner_view/<sought_user_id>", methods = ['POST'])
 def owner_view_profile(sought_user_id):
 	token = request.get_json()['token']
 	user = User.authenticate_token(sought_user_id, token)
@@ -47,7 +47,7 @@ def owner_view_profile(sought_user_id):
 
 # Update Profile
 
-@user_endpoints.route("/update_profile/<user_id>", methods = ['POST'])
+@user_endpoints.route("/user/update/<user_id>", methods = ['POST'])
 def update_profile(user_id):
 	data = request.get_json()
 	user = User.authenticate_token(user_id, data['token'])
