@@ -1,6 +1,7 @@
 from google.appengine.ext import ndb
 from models.user import User
 from responses.standard_error import StandardError
+import uuid
 
 class Group(ndb.Model):
     groupname = ndb.StringProperty(required=True)
@@ -12,8 +13,6 @@ class Group(ndb.Model):
 
     @classmethod
     def create_new_group(cls, data):
-        if Group.query(Group.groupname == data['groupname']).count() > 0:
-            raise StandardError("Group name already taken.")
     	invited_member_keys = []
         if 'invited_members' in data:
             for x in range(0, len(data['invited_members'])):
@@ -23,16 +22,18 @@ class Group(ndb.Model):
     	members.append(ndb.Key(User, data['user_id']))
         group = Group(groupname = data['groupname'],
             members = members,
-            invited_members = invited_member_keys, id = data['groupname'])
+            invited_members = invited_member_keys, id = str(uuid.uuid4()))
         for field in ('avatar', 'blurb'):
             if field in data:
                 setattr(group, field, data[field])
     	group.put()
+        creator = User.return_by_user_id(data['user_id'])
+        creator.add_group(group.key)
     	return group
 
     @classmethod
-    def return_by_groupname(cls, groupname):
-        return ndb.Key(Group, groupname).get()
+    def return_by_group_id(cls, group_id):
+        return ndb.Key(Group, group_id).get()
 
     def check_ismember(self, user_id):
         count = 0
@@ -42,6 +43,14 @@ class Group(ndb.Model):
             count+=1
         raise StandardError("User isn't a member of group.")
 
+    def remove_message(self, msg_id):
+        count = 0
+        while count < len(self.message_list):
+            if msg_id == self.message_list[count].id():
+                self.message_list.pop(count)
+                return self
+            count+=1
+        raise StandardError("Message not found")
 
     def update_group_info(self, data):
         for field in ('avatar', 'blurb'):
@@ -63,7 +72,8 @@ class Group(ndb.Model):
         'members': member_usernames,
         'invited_members': invited_member_usernames,
         'blurb': self.blurb,
-        'avatar': self.avatar}
+        'avatar': self.avatar,
+        'id' : self.key.id()}
 
     def message_list_output(self):
         message_ids = []

@@ -63,15 +63,15 @@ class User(ndb.Model):
         self.put()
         return self
 
-    def add_group(self, groupname):
-        self.groups_member.append(ndb.Key(Group, groupname))
+    def add_group(self, group_key):
+        self.groups_member.append(group_key)
         self.put()
         return self
 
-    def check_ismember(self, groupname):
+    def check_ismember(self, group_id):
         count = 0
         while count < len(self.groups_member):
-            if groupname == self.groups_member[count].id():
+            if group_id == self.groups_member[count].id():
                 return self
             count+=1
         raise StandardError("User isn't a member of group.")
@@ -85,10 +85,10 @@ class User(ndb.Model):
     def public_output(self):
         groups_member_names = []
         for x in range(0, len(self.groups_member)):
-            groups_member_names.append(self.groups_member[x].id())
+            groups_member_names.append(self.groups_member[x].get().groupname)
         invited_groups_names = []
         for y in range(0, len(self.groups_invited)):
-            invited_groups_names.append(self.groups_invited[y].id())
+            invited_groups_names.append(self.groups_invited[y].get().groupname)
         return {
             'username': self.username,
             'blurb': self.blurb,
